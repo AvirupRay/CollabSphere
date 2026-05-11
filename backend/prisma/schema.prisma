@@ -14,6 +14,7 @@ model User {
   createdAt DateTime @default(now())
 
   documents Document[]
+  collaborations DocumentCollaborator[]
 }
 
 model Document {
@@ -25,4 +26,17 @@ model Document {
   createdAt DateTime    @default(now())
 
   owner       User      @relation(fields: [ownerID], references: [id])
+  collaborators DocumentCollaborator[]
+}
+
+model DocumentCollaborator {
+  id         String   @id @default(uuid())
+  documentId String
+  userId     String
+  role       String   // "editor" | "viewer"
+
+  document   Document @relation(fields: [documentId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
+
+  @@unique([documentId,userId])
 }

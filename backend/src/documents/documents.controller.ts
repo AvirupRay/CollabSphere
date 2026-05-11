@@ -16,13 +16,28 @@ export class DocumentsController {
 
     @UseGuards(JwtAuthGuard)
     @Put(':id')
-    updateDocument(@Param('id') docId:string, @Body() dto: UpdateDocument){
-        return this.docService.updateDocument(docId, dto);
+    updateDocument(@Param('id') docId:string,@Req() req, @Body() dto: UpdateDocument){
+        return this.docService.updateDocument(docId, req.user.userId, dto);
     }
 
     @UseGuards(JwtAuthGuard)
     @Get(':id')
     getAllDocuments(@Param('id') userId:string){
         return this.docService.findAllDocuments(userId);
+    }
+
+    @Post(':id/share')
+        @UseGuards(JwtAuthGuard)
+        shareDocument(
+        @Param('id') documentId: string,
+        @Req() req,
+        @Body() body: { email: string; role: string },
+        ) {
+        return this.docService.shareDocument(
+            documentId,
+            req.user.userId,
+            body.email,
+            body.role,
+        );
     }
 }
